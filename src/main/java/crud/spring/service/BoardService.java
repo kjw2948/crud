@@ -5,6 +5,11 @@ import crud.spring.entity.BoardEntity;
 import crud.spring.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 // DTO -> Entity (Entity Class에서 진행)
 // Entity -> DTO (DTO Class에서 진행)
@@ -20,4 +25,38 @@ public class BoardService {
         BoardEntity boardEntity = BoardEntity.toSaveEntity(boardDTO);
         boardRepository.save(boardEntity);
     }
+
+    public List<BoardDTO> findAll() {
+        List<BoardEntity> boardEntityList = boardRepository.findAll();
+        List<BoardDTO> boardDTOList = new ArrayList<>();
+
+        for (BoardEntity boardEntity : boardEntityList) {
+            boardDTOList.add(BoardDTO.toBoardDTO(boardEntity));
+        }
+
+        return boardDTOList;
+    }
+
+
+    @Transactional // 트랜잭션이 필요하므로 꼭 붙여줘야함! (영속성 컨텍스트 --> 데이터 일관성 등)
+    public void updateHits(Long id) {
+        boardRepository.updateHits(id);
+    }
+
+    public BoardDTO findById(Long id) {
+        Optional<BoardEntity> optionalBoardEntity = boardRepository.findById(id);
+        if (optionalBoardEntity.isPresent()) {
+            BoardEntity boardEntity = optionalBoardEntity.get();
+            return BoardDTO.toBoardDTO(boardEntity);
+        } else {
+            return null;
+        }
+    }
+
+    /*
+    public BoardDTO findById(Long id) {
+        Optional<BoardEntity> boardEntity = boardRepository.findById(id);
+        return BoardDTO.toBoardDTO(boardEntity)
+    }
+     */
 }
