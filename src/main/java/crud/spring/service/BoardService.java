@@ -53,10 +53,13 @@ public class BoardService {
         }
     }
 
-    /*
-    public BoardDTO findById(Long id) {
-        Optional<BoardEntity> boardEntity = boardRepository.findById(id);
-        return BoardDTO.toBoardDTO(boardEntity)
+    public BoardDTO update(BoardDTO boardDTO) {
+        BoardEntity boardEntity = BoardEntity.toUpdateEntity(boardDTO);
+        boardRepository.save(boardEntity);
+        return findById(boardDTO.getId());
     }
-     */
+
+    public void delete(Long id) {
+        boardRepository.deleteById(id);
+    }
 }
