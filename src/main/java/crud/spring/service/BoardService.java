@@ -4,6 +4,10 @@ import crud.spring.dto.BoardDTO;
 import crud.spring.entity.BoardEntity;
 import crud.spring.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,5 +65,27 @@ public class BoardService {
 
     public void delete(Long id) {
         boardRepository.deleteById(id);
+    }
+
+    public Page<BoardDTO> paging(Pageable pageable) {
+        int page = pageable.getPageNumber() - 1;
+        int pageLimit = 3; // 한 페이지에 보여줄 글 갯수
+        // 한페이지당 3개씩 글을 보여주고 정렬 기준은 id 기준으로 내림차순 정렬
+        Page<BoardEntity> boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit,
+                                                        Sort.by(Sort.Direction.DESC, "id"))); // properties : entity 기준
+
+        /*
+        boardEntities.getContent(); //요청 페이지에 해당하는 글
+        boardEntities.getTotalElements(); // 전체 글 갯수
+        boardEntities.getNumber(); // DB로 요청한 페이지 번호
+        boardEntities.getTotalPages(); // 전체 페이지 갯수
+        boardEntities.getSize(); // 한 페이지에 보여지는 글 갯수
+        boardEntities.hasPrevious(); // 이전 페이지 존재 여부
+        boardEntities.isFirst(); // 첫 페이지 여부
+        boardEntities.isLast(); // 마지막 페이지 여부
+         */
+        return boardEntities.map(board -> new BoardDTO(board.getId(), board.getBoardWriter(),
+                                                                board.getBoardTitle(), board.getBoardHits(),
+                                                                board.getCreatedTime()));
     }
 }
