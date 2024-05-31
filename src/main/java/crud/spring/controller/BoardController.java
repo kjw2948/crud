@@ -39,7 +39,7 @@ public class BoardController {
 
     @GetMapping("/{id}")
     public String findById(@PathVariable Long id, Model model,
-                           @PageableDefault(page=1) Pageable pageable) {
+                           @PageableDefault(page = 1) Pageable pageable) {
         boardService.updateHits(id);
         BoardDTO board = boardService.findById(id);
         model.addAttribute("board", board);
@@ -68,7 +68,7 @@ public class BoardController {
     }
 
     @GetMapping("/paging")
-    public String paging(@PageableDefault(page = 1)Pageable pageable, Model model) {
+    public String paging(@PageableDefault(page = 1) Pageable pageable, Model model) {
         //pageable.getPageNumber();
         Page<BoardDTO> boardList = boardService.paging(pageable);
         int blockLimit = 3;
@@ -79,6 +79,11 @@ public class BoardController {
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         return "paging";
+    }
+
+    @GetMapping("/redirect")
+    public String redirect() {
+        return "redirect";
     }
 
 
